@@ -1,0 +1,47 @@
+﻿<UserControl x:Class="EmailService.E2E.Tests.Tools.WebInfoDesktop.WebElementEditControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:EmailService.E2E.Tests.Tools.WebInfoDesktop"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <StackPanel Grid.Column="0">
+            <GroupBox Header="Name:">
+                <TextBox Name="NameTextBox"></TextBox>
+            </GroupBox>
+            <GroupBox Header="Description:">
+                <TextBox Name="DescriptionTextBox" AcceptsReturn="True" MinHeight="50" TextWrapping="WrapWithOverflow"></TextBox>
+            </GroupBox>
+            <GroupBox>
+                <GroupBox.Header>
+                    <WrapPanel>
+                        <CheckBox Name="IsKeyCheckbox" Foreground="White">Is Key element for the context?</CheckBox>
+                    </WrapPanel>
+                </GroupBox.Header>
+            </GroupBox>
+            <GroupBox Header="Locator">
+                <StackPanel>
+                    <WrapPanel>
+                        <CheckBox Name="IsRelativeCheckBox" IsChecked="True">Is relative</CheckBox>
+                    </WrapPanel>
+                    <WrapPanel>
+                        <Label>Locator type:</Label>
+                        <ComboBox Name="LocatorTypeComboBox" Width="70">
+                            <ComboBoxItem IsSelected="True">XPath</ComboBoxItem>
+                            <ComboBoxItem>Css</ComboBoxItem>
+                            <ComboBoxItem>Id</ComboBoxItem>
+                        </ComboBox>
+                    </WrapPanel>
+                    <GroupBox Header="Value">
+                        <TextBox Name="LocatorValueTextBox"></TextBox>
+                    </GroupBox>
+                </StackPanel>
+            </GroupBox>
+            <Expander Header="Tags">
+                <local:TagsListControl x:Name="TagsControl"></local:TagsListControl>
+            </Expander>
+        </StackPanel>
+    </Grid>
+</UserControl>

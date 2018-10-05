@@ -1,0 +1,180 @@
+﻿<controls:MetroWindow x:Class="EmailService.E2E.Tests.Tools.WebInfoDesktop.WebElementDetailsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:converters="clr-namespace:EmailService.E2E.Tests.Tools.WebInfoDesktop.Converters"
+        xmlns:local="clr-namespace:EmailService.E2E.Tests.Tools.WebInfoDesktop"
+        mc:Ignorable="d"
+        Title="WebElementDetailsWindow" Height="800" Width="800" SizeToContent="WidthAndHeight" >
+
+    <controls:MetroWindow.Resources>
+        <converters:HasInnerKeyConverter x:Key="HasInnerKeyConv"></converters:HasInnerKeyConverter>
+
+        <Style TargetType="Label" BasedOn="{StaticResource {x:Type Label}}">
+            <Setter Property="MinWidth" Value="70"></Setter>
+            <Setter Property="Margin" Value="2"></Setter>
+            <Setter Property="VerticalAlignment" Value="Center"></Setter>
+        </Style>
+
+        <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+            <Setter Property="MinWidth" Value="400"></Setter>
+            <Setter Property="Margin" Value="2"></Setter>
+            <Setter Property="VerticalAlignment" Value="Center"></Setter>
+            <Setter Property="BorderBrush" Value="Black"></Setter>
+            <!--<Setter Property="Background" Value="Transparent"></Setter>-->
+        </Style>
+
+        <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
+            <Setter Property="Margin" Value="2"></Setter>
+            <Setter Property="VerticalAlignment" Value="Center"></Setter>
+        </Style>
+
+    </controls:MetroWindow.Resources>
+
+    <Grid>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <WrapPanel HorizontalAlignment="Center">
+            <Button Click="CancelButton_Click" Margin="2 2 10 2">Cancel</Button>
+            <Button Click="AcceptButton_Click" Margin="10 2 2 2">
+                <Button.Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                        <Setter Property="Content" Value="Accept"></Setter>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsUpdateMode}" Value="True">
+                                <Setter Property="Content" Value="Update"></Setter>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsUpdateMode}" Value="False">
+                                <Setter Property="Content" Value="Create"></Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+        </WrapPanel>
+
+        <StackPanel Grid.Row="1">
+
+            <GroupBox Header="Element type">
+                    <TextBox Text="{Binding Source.ElementType}" IsReadOnly="True"
+                             Margin="20 5 5 5"
+                             BorderThickness="0"
+                             FontWeight="Bold"></TextBox>
+            </GroupBox>
+
+            <GroupBox Header="Name">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label FontWeight="Bold">Current:</Label>
+                        <TextBox Text="{Binding Updated.Name}"></TextBox>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label>Previous:</Label>
+                        <TextBox Text="{Binding Source.Name}" IsReadOnly="True" Background="Transparent"
+                                 BorderThickness="0"></TextBox>
+                    </StackPanel>
+                </StackPanel>
+            </GroupBox>
+
+            <GroupBox Header="Description">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label FontWeight="Bold">Current:</Label>
+                        <TextBox Text="{Binding Updated.Description}" AcceptsReturn="True"></TextBox>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label>Previous:</Label>
+                        <TextBox Text="{Binding Source.Description}" IsReadOnly="True" AcceptsReturn="True"
+                                 Background="Transparent"
+                                 BorderThickness="0"></TextBox>
+                    </StackPanel>
+                </StackPanel>
+            </GroupBox>
+
+            <GroupBox Header="Is key for parent?">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label FontWeight="Bold">Current:</Label>
+                        <CheckBox IsChecked="{Binding Updated.IsKey}"
+                                  BorderBrush="Black"></CheckBox>
+                        <Label Margin="20 0 0 0">Previous:</Label>
+                        <CheckBox IsChecked="{Binding Source.IsKey}" IsEnabled="False"></CheckBox>
+                    </StackPanel>
+                </StackPanel>
+            </GroupBox>
+
+            <GroupBox Header="Inner key">
+                <StackPanel Orientation="Horizontal">
+                    <TextBox Text="{Binding Source.InnerKey}" IsReadOnly="True"
+                             Margin="20 5 5 5"
+                             BorderThickness="0"
+                             FontWeight="Bold"></TextBox>
+                </StackPanel>
+                <GroupBox.Style>
+                    <Style TargetType="GroupBox" BasedOn="{StaticResource {x:Type GroupBox}}">
+                        <Setter Property="Visibility" Value="Collapsed"></Setter>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Source.InnerKey, Converter={StaticResource HasInnerKeyConv}}"
+                                         Value="True">
+                                <Setter Property="Visibility" Value="Visible"></Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </GroupBox.Style>
+            </GroupBox>
+
+            <GroupBox Header="Locator details">
+                <StackPanel>
+                    <GroupBox Header="Locator type">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Label FontWeight="Bold">Current:</Label>
+                                <ComboBox ItemsSource="{Binding Source.WebLocator.LocatorTypes}"
+                                          SelectedItem="{Binding Updated.WebLocator.LocatorType}" 
+                                          IsSynchronizedWithCurrentItem="True"
+                                          MinWidth="100"/>
+                                <Label Margin="20 0 0 0">Previous:</Label>
+                                <TextBox Text="{Binding Source.WebLocator.LocatorType}" IsReadOnly="True"
+                                         Background="Transparent"
+                                         BorderThickness="0"></TextBox>
+                            </StackPanel>
+                        </StackPanel>
+                    </GroupBox>
+
+                    <GroupBox Header="Locator value">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Label FontWeight="Bold">Current:</Label>
+                                <TextBox Text="{Binding Updated.WebLocator.LocatorValue}"></TextBox>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Label>Previous:</Label>
+                                <TextBox Text="{Binding Source.WebLocator.LocatorValue}" IsReadOnly="True"
+                                         Background="Transparent"
+                                         BorderThickness="0"></TextBox>
+                            </StackPanel>
+                        </StackPanel>
+                    </GroupBox>
+
+                    <GroupBox Header="Is relative to parent?">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Label FontWeight="Bold">Current:</Label>
+                                <CheckBox IsChecked="{Binding Updated.WebLocator.IsRelative}"
+                                          BorderBrush="Black"></CheckBox>
+                                <Label Margin="20 0 0 0">Previous:</Label>
+                                <CheckBox IsChecked="{Binding Source.WebLocator.IsRelative}" IsEnabled="False"></CheckBox>
+                            </StackPanel>
+                        </StackPanel>
+                    </GroupBox>
+                </StackPanel>
+            </GroupBox>
+        </StackPanel>
+    </Grid>
+</controls:MetroWindow>

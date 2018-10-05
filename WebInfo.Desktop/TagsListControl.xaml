@@ -1,0 +1,26 @@
+﻿<UserControl x:Class="EmailService.E2E.Tests.Tools.WebInfoDesktop.TagsListControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:EmailService.E2E.Tests.Tools.WebInfoDesktop"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <Menu Grid.Row="0">
+            <MenuItem Header="Add" Margin="2" Click="AddButton_Click"></MenuItem>
+            <MenuItem Header="Edit" Margin="2" Click="EditButton_Click"></MenuItem>
+            <MenuItem Header="Delete" Margin="2" Click="DeleteButton_Click"></MenuItem>
+        </Menu>
+
+        <GroupBox Name="TagsGroupBox" Grid.Row="1" Header="Tags">
+            <ListBox Name="TagsListBox" SelectionChanged="TagsListBox_SelectionChanged"></ListBox>
+        </GroupBox>
+
+    </Grid>
+</UserControl>

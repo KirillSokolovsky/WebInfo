@@ -1,0 +1,396 @@
+﻿<controls:MetroWindow x:Class="WebInfo.Desktop.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:local="clr-namespace:EmailService.E2E.Tests.Tools.WebInfoDesktop"
+        xmlns:model="clr-namespace:EmailService.E2E.Tests.Tools.WebInfoDesktop.Models"
+        xmlns:converters="clr-namespace:EmailService.E2E.Tests.Tools.WebInfoDesktop.Converters"
+        xmlns:behaviors="clr-namespace:EmailService.E2E.Tests.Tools.WebInfoDesktop.Behaviors"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        mc:Ignorable="d"
+        Title="Web Elements Structure Information tool" Height="900" Width="1700" WindowState="Maximized">
+
+    <controls:MetroWindow.Resources>
+
+        <converters:HasInnerKeyConverter x:Key="HasInnerKeyConv"></converters:HasInnerKeyConverter>
+        <converters:HasMovingElementConverter x:Key="HasMovingElementConv"></converters:HasMovingElementConverter>
+
+        <Style x:Key="InnerKeyStyle" TargetType="Border">
+            <Setter Property="BorderThickness" Value="1 1 3 1"></Setter>
+            <Setter Property="Margin" Value="0 0 5 0"></Setter>
+            <Setter Property="Padding" Value="2 2 5 2"></Setter>
+            <Setter Property="BorderBrush" Value="Blue"></Setter>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding InnerKey}" Value="{x:Null}">
+                    <Setter Property="Visibility" Value="Collapsed"></Setter>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="IsKeyStyle" TargetType="Border">
+            <Setter Property="BorderThickness" Value="1 1 3 1"></Setter>
+            <Setter Property="Margin" Value="0 0 5 0"></Setter>
+            <Setter Property="Padding" Value="2 2 5 2"></Setter>
+            <Setter Property="BorderBrush" Value="Black"></Setter>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsKey}" Value="False">
+                    <Setter Property="Visibility" Value="Collapsed"></Setter>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="ElementTypeStyle" TargetType="Border">
+
+            <Setter Property="BorderThickness" Value="0 0 2 0"></Setter>
+            <Setter Property="BorderBrush" Value="Gray"></Setter>
+
+            <Setter Property="Margin" Value="0 0 5 0"></Setter>
+            <Setter Property="Padding" Value="2 2 5 2"></Setter>
+
+            <Setter Property="VerticalAlignment" Value="Center"></Setter>
+
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ElementType}" Value="Context">
+                    <Setter Property="Background" Value="Red"></Setter>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding ElementType}" Value="Element">
+                    <Setter Property="BorderThickness" Value="1 1 2 1"></Setter>
+                    <Setter Property="BorderBrush" Value="GreenYellow"></Setter>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding ElementType}" Value="Control">
+                    <Setter Property="BorderThickness" Value="1 1 2 1"></Setter>
+                    <Setter Property="BorderBrush" Value="Green"></Setter>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style TargetType="TextBlock">
+            <Setter Property="Margin" Value="5"></Setter>
+        </Style>
+
+    </controls:MetroWindow.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <Menu Grid.Row="0">
+            <MenuItem Header="Save" Click="SaveMenuItem_Click"></MenuItem>
+        </Menu>
+
+        <StackPanel Grid.Row="1">
+            <!--<Button Name="TextButton" Click="TextButton_Click">Do smt</Button>-->
+        </StackPanel>
+
+        <Grid Grid.Row="2">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="5"></ColumnDefinition>
+                <ColumnDefinition Width="3*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+
+            <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"></GridSplitter>
+
+            <GroupBox Header="Elements tree">
+                <Grid>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="*"></RowDefinition>
+                    </Grid.RowDefinitions>
+
+                    <WrapPanel>
+                        <Label Margin="2"
+                               VerticalAlignment="Center">Search:</Label>
+                        <TextBox Name="SearchElementTextBox" MinWidth="150"
+                                 Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}"
+                                 Margin="2"
+                                 VerticalAlignment="Center"></TextBox>
+                        <Button Name="ResetSearchButton" Click="ResetSearchButton_Click"
+                                Margin="2"
+                                VerticalAlignment="Center">Reset</Button>
+                    </WrapPanel>
+
+                    <TreeView Name="ElementsTreeView" Grid.Row="1"
+                          SelectedItemChanged="ElementsTreeView_SelectedItemChanged">
+
+                        <i:Interaction.Behaviors>
+                            <behaviors:BindableSelectedItemBehavior SelectedItem="{Binding SelectedElement, Mode=TwoWay}">
+                            </behaviors:BindableSelectedItemBehavior>
+                        </i:Interaction.Behaviors>
+
+                        <TreeViewItem IsExpanded="True"
+                                  ItemsSource="{Binding Elements}">
+
+                            <TreeViewItem.Header>
+                                <TextBlock Text="Contexts">
+                                    <TextBlock.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Header="Add Context" Click="AddContextMenuItem_Click"></MenuItem>
+                                        </ContextMenu>
+                                    </TextBlock.ContextMenu>
+                                </TextBlock>
+                            </TreeViewItem.Header>
+
+                            <TreeViewItem.ItemContainerStyle>
+                                <Style TargetType="TreeViewItem" BasedOn="{StaticResource {x:Type TreeViewItem}}">
+                                    <Setter Property="IsExpanded" Value="False" />
+                                    <Setter Property="Visibility" Value="Visible"></Setter>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsShown}" Value="False">
+                                            <Setter Property="Visibility" Value="Collapsed"></Setter>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsShown}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible"></Setter>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding ElementType}" Value="Context">
+                                            <Setter Property="IsExpanded" Value="True"></Setter>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TreeViewItem.ItemContainerStyle>
+
+                            <TreeViewItem.Resources>
+
+                                <HierarchicalDataTemplate DataType="{x:Type model:WebElementViewModel}">
+                                    <StackPanel Orientation="Horizontal">
+
+                                        <Border Style="{StaticResource InnerKeyStyle}">
+                                            <TextBlock Text="{Binding InnerKey}" MinWidth="50"></TextBlock>
+                                        </Border>
+
+                                        <Border Style="{StaticResource ElementTypeStyle}">
+                                            <TextBlock Text="{Binding ElementType}"></TextBlock>
+                                        </Border>
+
+                                        <Border Style="{StaticResource IsKeyStyle}">
+                                            <TextBlock Text="Key"></TextBlock>
+                                        </Border>
+
+                                        <TextBlock Text="{Binding Name}"></TextBlock>
+
+                                        <StackPanel.ToolTip>
+                                            <TextBlock Text="{Binding Description}"></TextBlock>
+                                        </StackPanel.ToolTip>
+
+                                        <StackPanel.ContextMenu>
+                                            <ContextMenu>
+                                                <MenuItem Header="Copy Name" Click="CopyNameMenuItem_Click"></MenuItem>
+                                                <MenuItem Header="Edit" Click="EditMenuItem_Click"></MenuItem>
+                                                <MenuItem Header="Actions">
+                                                    <MenuItem Header="Remove" Click="RemoveMenuItem_Click">
+                                                        <MenuItem.Style>
+                                                            <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding InnerKey, Converter={StaticResource HasInnerKeyConv}}" Value="True">
+                                                                        <Setter Property="Visibility" Value="Collapsed"></Setter>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </MenuItem.Style>
+                                                    </MenuItem>
+                                                    <MenuItem Header="Move" Click="MoveMenuItem_Click"></MenuItem>
+                                                </MenuItem>
+                                            </ContextMenu>
+                                        </StackPanel.ContextMenu>
+
+                                    </StackPanel>
+                                </HierarchicalDataTemplate>
+
+                                <HierarchicalDataTemplate DataType="{x:Type model:CombinedElementViewModel}"
+                                                  ItemsSource="{Binding Elements}">
+                                    <StackPanel Orientation="Horizontal">
+
+                                        <Border Style="{StaticResource ElementTypeStyle}">
+                                            <TextBlock Text="{Binding ElementType}"></TextBlock>
+                                        </Border>
+
+                                        <Border Style="{StaticResource IsKeyStyle}">
+                                            <TextBlock Text="Key"></TextBlock>
+                                        </Border>
+
+                                        <TextBlock Text="{Binding Name}"></TextBlock>
+
+                                        <StackPanel.ToolTip>
+                                            <TextBlock Text="{Binding Description}"></TextBlock>
+                                        </StackPanel.ToolTip>
+
+                                        <StackPanel.ContextMenu>
+                                            <ContextMenu>
+                                                <MenuItem Header="Copy Name" Click="CopyNameMenuItem_Click"></MenuItem>
+                                                <MenuItem Header="Add">
+                                                    <MenuItem Header="Element" Click="AddElementMenuItem_Click"></MenuItem>
+                                                    <MenuItem Header="Control" Click="AddControlMenuItem_Click"></MenuItem>
+                                                    <MenuItem Header="DropDown" Click="AddDropDownMenuItem_Click"></MenuItem>
+                                                    <MenuItem Header="RadioGroup" Click="AddRadioGroupMenuItem_Click"></MenuItem>
+                                                    <MenuItem.Style>
+                                                        <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
+                                                            <Setter Property="Visibility" Value="Collapsed"></Setter>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding ElementType}" Value="Context">
+                                                                    <Setter Property="Visibility" Value="Visible"></Setter>
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding ElementType}" Value="Control">
+                                                                    <Setter Property="Visibility" Value="Visible"></Setter>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </MenuItem.Style>
+                                                </MenuItem>
+                                                <MenuItem Header="Edit" Click="EditMenuItem_Click"></MenuItem>
+                                                <MenuItem Header="Actions">
+                                                    <MenuItem Header="Remove" Click="RemoveMenuItem_Click"></MenuItem>
+                                                    <MenuItem Header="Move" Click="MoveMenuItem_Click">
+                                                        <MenuItem.Style>
+                                                            <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
+                                                                <Setter Property="Visibility" Value="Visible"></Setter>
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding ElementType}" Value="Context">
+                                                                        <Setter Property="Visibility" Value="Collapsed"></Setter>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </MenuItem.Style>
+                                                    </MenuItem>
+                                                    <MenuItem Header="Paste" Click="PasteMenuItem_Click">
+                                                        <MenuItem.Style>
+                                                            <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
+                                                                <Setter Property="Visibility" Value="Collapsed"></Setter>
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding ElementType}" Value="Context">
+                                                                        <Setter Property="Visibility" Value="Visible"></Setter>
+                                                                    </DataTrigger>
+                                                                    <DataTrigger Binding="{Binding ElementType}" Value="Control">
+                                                                        <Setter Property="Visibility" Value="Visible"></Setter>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </MenuItem.Style>
+                                                    </MenuItem>
+                                                </MenuItem>
+                                            </ContextMenu>
+                                        </StackPanel.ContextMenu>
+
+                                    </StackPanel>
+                                </HierarchicalDataTemplate>
+
+                            </TreeViewItem.Resources>
+                        </TreeViewItem>
+
+                    </TreeView>
+                </Grid>
+            </GroupBox>
+
+            <GroupBox Grid.Column="2">
+                <GroupBox.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Margin="2" VerticalAlignment="Center" Foreground="White">ELEMENT DETAILS</Label>
+                        <Button Margin="2" VerticalAlignment="Center" Content="Edit" Click="EditMenuItem_Click">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                    <Setter Property="Visibility" Value="Visible"></Setter>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding SelectedElement}" Value="{x:Null}">
+                                            <Setter Property="Visibility" Value="Hidden"></Setter>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <Button Margin="2" VerticalAlignment="Center" Content="Copy Name" Click="CopyNameMenuItem_Click">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                    <Setter Property="Visibility" Value="Visible"></Setter>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding SelectedElement}" Value="{x:Null}">
+                                            <Setter Property="Visibility" Value="Hidden"></Setter>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                    </StackPanel>
+                </GroupBox.Header>
+
+                <StackPanel>
+
+                    <StackPanel.Resources>
+                        <Style TargetType="Label" BasedOn="{StaticResource {x:Type Label}}">
+                            <Setter Property="MinWidth" Value="100"></Setter>
+                            <Setter Property="Margin" Value="2"></Setter>
+                            <Setter Property="VerticalAlignment" Value="Center"></Setter>
+                        </Style>
+                        <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
+                            <Setter Property="IsEnabled" Value="False"></Setter>
+                            <Setter Property="Margin" Value="2"></Setter>
+                            <Setter Property="VerticalAlignment" Value="Center"></Setter>
+                        </Style>
+                        <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+                            <Setter Property="MinWidth" Value="600"></Setter>
+                            <Setter Property="IsReadOnly" Value="True"></Setter>
+                            <Setter Property="Margin" Value="2"></Setter>
+                            <Setter Property="VerticalAlignment" Value="Center"></Setter>
+                        </Style>
+                    </StackPanel.Resources>
+
+                    <StackPanel.Style>
+                        <Style TargetType="StackPanel">
+                            <Setter Property="Visibility" Value="Visible"></Setter>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding SelectedElement}" Value="{x:Null}">
+                                    <Setter Property="Visibility" Value="Hidden"></Setter>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </StackPanel.Style>
+
+                    <StackPanel Orientation="Horizontal">
+                        <Label>Element Type:</Label>
+                        <TextBox Text="{Binding SelectedElement.ElementType}"></TextBox>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label>Name:</Label>
+                        <TextBox Text="{Binding SelectedElement.Name}"></TextBox>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label>Description:</Label>
+                        <TextBox Text="{Binding SelectedElement.Description}" AcceptsReturn="True"></TextBox>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label>Is key?:</Label>
+                        <CheckBox IsChecked="{Binding SelectedElement.IsKey}"></CheckBox>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label>Inner Key:</Label>
+                        <TextBox Text="{Binding SelectedElement.InnerKey}"></TextBox>
+                    </StackPanel>
+                    <GroupBox Header="Locator Details">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Label>Locator Type:</Label>
+                                <TextBox Text="{Binding SelectedElement.WebLocator.LocatorType}"></TextBox>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Label>Locator Value:</Label>
+                                <TextBox Text="{Binding SelectedElement.WebLocator.LocatorValue}"></TextBox>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Label>Is Relative?:</Label>
+                                <CheckBox IsChecked="{Binding SelectedElement.WebLocator.IsRelative}"></CheckBox>
+                            </StackPanel>
+                        </StackPanel>
+                    </GroupBox>
+                </StackPanel>
+
+            </GroupBox>
+
+        </Grid>
+
+    </Grid>
+</controls:MetroWindow>

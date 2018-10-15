@@ -4,10 +4,11 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
-        xmlns:local="clr-namespace:EmailService.E2E.Tests.Tools.WebInfoDesktop"
-        xmlns:model="clr-namespace:EmailService.E2E.Tests.Tools.WebInfoDesktop.Models"
-        xmlns:converters="clr-namespace:EmailService.E2E.Tests.Tools.WebInfoDesktop.Converters"
-        xmlns:behaviors="clr-namespace:EmailService.E2E.Tests.Tools.WebInfoDesktop.Behaviors"
+        xmlns:local="clr-namespace:WebInfo.Desktop"
+        xmlns:model="clr-namespace:WebInfo.Desktop.Models"
+        xmlns:converters="clr-namespace:WebInfo.Desktop.Converters"
+        xmlns:behaviors="clr-namespace:WebInfo.Desktop.Behaviors"
+        xmlns:cefSharp="clr-namespace:CefSharp.Wpf;assembly=CefSharp.Wpf"
         xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         mc:Ignorable="d"
         Title="Web Elements Structure Information tool" Height="900" Width="1700" WindowState="Maximized">
@@ -287,108 +288,134 @@
                 </Grid>
             </GroupBox>
 
-            <GroupBox Grid.Column="2">
-                <GroupBox.Header>
-                    <StackPanel Orientation="Horizontal">
-                        <Label Margin="2" VerticalAlignment="Center" Foreground="White">ELEMENT DETAILS</Label>
-                        <Button Margin="2" VerticalAlignment="Center" Content="Edit" Click="EditMenuItem_Click">
-                            <Button.Style>
-                                <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-                                    <Setter Property="Visibility" Value="Visible"></Setter>
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding SelectedElement}" Value="{x:Null}">
-                                            <Setter Property="Visibility" Value="Hidden"></Setter>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Button.Style>
-                        </Button>
-                        <Button Margin="2" VerticalAlignment="Center" Content="Copy Name" Click="CopyNameMenuItem_Click">
-                            <Button.Style>
-                                <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-                                    <Setter Property="Visibility" Value="Visible"></Setter>
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding SelectedElement}" Value="{x:Null}">
-                                            <Setter Property="Visibility" Value="Hidden"></Setter>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Button.Style>
-                        </Button>
-                    </StackPanel>
-                </GroupBox.Header>
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                </Grid.RowDefinitions>
 
-                <StackPanel>
-
-                    <StackPanel.Resources>
-                        <Style TargetType="Label" BasedOn="{StaticResource {x:Type Label}}">
-                            <Setter Property="MinWidth" Value="100"></Setter>
-                            <Setter Property="Margin" Value="2"></Setter>
-                            <Setter Property="VerticalAlignment" Value="Center"></Setter>
-                        </Style>
-                        <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
-                            <Setter Property="IsEnabled" Value="False"></Setter>
-                            <Setter Property="Margin" Value="2"></Setter>
-                            <Setter Property="VerticalAlignment" Value="Center"></Setter>
-                        </Style>
-                        <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
-                            <Setter Property="MinWidth" Value="600"></Setter>
-                            <Setter Property="IsReadOnly" Value="True"></Setter>
-                            <Setter Property="Margin" Value="2"></Setter>
-                            <Setter Property="VerticalAlignment" Value="Center"></Setter>
-                        </Style>
-                    </StackPanel.Resources>
-
-                    <StackPanel.Style>
-                        <Style TargetType="StackPanel">
-                            <Setter Property="Visibility" Value="Visible"></Setter>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding SelectedElement}" Value="{x:Null}">
-                                    <Setter Property="Visibility" Value="Hidden"></Setter>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </StackPanel.Style>
-
-                    <StackPanel Orientation="Horizontal">
-                        <Label>Element Type:</Label>
-                        <TextBox Text="{Binding SelectedElement.ElementType}"></TextBox>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <Label>Name:</Label>
-                        <TextBox Text="{Binding SelectedElement.Name}"></TextBox>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <Label>Description:</Label>
-                        <TextBox Text="{Binding SelectedElement.Description}" AcceptsReturn="True"></TextBox>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <Label>Is key?:</Label>
-                        <CheckBox IsChecked="{Binding SelectedElement.IsKey}"></CheckBox>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <Label>Inner Key:</Label>
-                        <TextBox Text="{Binding SelectedElement.InnerKey}"></TextBox>
-                    </StackPanel>
-                    <GroupBox Header="Locator Details">
-                        <StackPanel>
-                            <StackPanel Orientation="Horizontal">
-                                <Label>Locator Type:</Label>
-                                <TextBox Text="{Binding SelectedElement.WebLocator.LocatorType}"></TextBox>
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal">
-                                <Label>Locator Value:</Label>
-                                <TextBox Text="{Binding SelectedElement.WebLocator.LocatorValue}"></TextBox>
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal">
-                                <Label>Is Relative?:</Label>
-                                <CheckBox IsChecked="{Binding SelectedElement.WebLocator.IsRelative}"></CheckBox>
-                            </StackPanel>
+                <GroupBox Grid.Row="0">
+                    <GroupBox.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Margin="2" VerticalAlignment="Center" Foreground="White">ELEMENT DETAILS</Label>
+                            <Button Margin="2" VerticalAlignment="Center" Content="Edit" Click="EditMenuItem_Click">
+                                <Button.Style>
+                                    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                        <Setter Property="Visibility" Value="Visible"></Setter>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding SelectedElement}" Value="{x:Null}">
+                                                <Setter Property="Visibility" Value="Hidden"></Setter>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                            <Button Margin="2" VerticalAlignment="Center" Content="Copy Name" Click="CopyNameMenuItem_Click">
+                                <Button.Style>
+                                    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                        <Setter Property="Visibility" Value="Visible"></Setter>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding SelectedElement}" Value="{x:Null}">
+                                                <Setter Property="Visibility" Value="Hidden"></Setter>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
                         </StackPanel>
-                    </GroupBox>
-                </StackPanel>
+                    </GroupBox.Header>
 
-            </GroupBox>
+                    <StackPanel>
+
+                        <StackPanel.Resources>
+                            <Style TargetType="Label" BasedOn="{StaticResource {x:Type Label}}">
+                                <Setter Property="MinWidth" Value="100"></Setter>
+                                <Setter Property="Margin" Value="2"></Setter>
+                                <Setter Property="VerticalAlignment" Value="Center"></Setter>
+                            </Style>
+                            <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
+                                <Setter Property="IsEnabled" Value="False"></Setter>
+                                <Setter Property="Margin" Value="2"></Setter>
+                                <Setter Property="VerticalAlignment" Value="Center"></Setter>
+                            </Style>
+                            <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+                                <Setter Property="MinWidth" Value="600"></Setter>
+                                <Setter Property="IsReadOnly" Value="True"></Setter>
+                                <Setter Property="Margin" Value="2"></Setter>
+                                <Setter Property="VerticalAlignment" Value="Center"></Setter>
+                            </Style>
+                        </StackPanel.Resources>
+
+                        <StackPanel.Style>
+                            <Style TargetType="StackPanel">
+                                <Setter Property="Visibility" Value="Visible"></Setter>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding SelectedElement}" Value="{x:Null}">
+                                        <Setter Property="Visibility" Value="Hidden"></Setter>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
+
+                        <StackPanel Orientation="Horizontal">
+                            <Label>Element Type:</Label>
+                            <TextBox Text="{Binding SelectedElement.ElementType}"></TextBox>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label>Name:</Label>
+                            <TextBox Text="{Binding SelectedElement.Name}"></TextBox>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label>Description:</Label>
+                            <TextBox Text="{Binding SelectedElement.Description}" AcceptsReturn="True"></TextBox>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label>Is key?:</Label>
+                            <CheckBox IsChecked="{Binding SelectedElement.IsKey}"></CheckBox>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label>Inner Key:</Label>
+                            <TextBox Text="{Binding SelectedElement.InnerKey}"></TextBox>
+                        </StackPanel>
+                        <GroupBox Header="Locator Details">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <Label>Locator Type:</Label>
+                                    <TextBox Text="{Binding SelectedElement.WebLocator.LocatorType}"></TextBox>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <Label>Locator Value:</Label>
+                                    <TextBox Text="{Binding SelectedElement.WebLocator.LocatorValue}"></TextBox>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <Label>Is Relative?:</Label>
+                                    <CheckBox IsChecked="{Binding SelectedElement.WebLocator.IsRelative}"></CheckBox>
+                                </StackPanel>
+                            </StackPanel>
+                        </GroupBox>
+                    </StackPanel>
+
+                </GroupBox>
+
+                <GroupBox Grid.Row="1" Header="Html" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
+                          ScrollViewer.CanContentScroll="True">
+
+                    <ScrollViewer VerticalScrollBarVisibility="Visible" 
+                                  HorizontalScrollBarVisibility="Visible"
+                                  CanContentScroll="True">
+                        <cefSharp:ChromiumWebBrowser x:Name="ChromeBrowser" Address="https://google.com"
+                                                 Width="1920"
+                                                 Height="1080" 
+                                                     ScrollViewer.HorizontalScrollBarVisibility="Visible"
+                                                     ScrollViewer.CanContentScroll="True"
+                                                     IsEnabled="True"
+                                                     PreviewMouseDown="ChromeBrowser_PreviewMouseDown" PreviewMouseUp="ChromeBrowser_PreviewMouseUp"
+                                                     FrameLoadEnd="ChromeBrowser_FrameLoadEnd">
+                            
+                        </cefSharp:ChromiumWebBrowser>
+                    </ScrollViewer>
+                </GroupBox>
+            </Grid>
 
         </Grid>
 

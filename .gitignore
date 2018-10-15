@@ -6,3 +6,6 @@
 /packages
 */bin/Debug
 */obj/Debug
+*/bin/x64
+*/obj/x64
+/.vs/config

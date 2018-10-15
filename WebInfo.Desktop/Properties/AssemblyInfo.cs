@@ -7,11 +7,11 @@ using System.Windows;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("EmailService.E2E.Tests.Tools.WebInfoDesktop")]
+[assembly: AssemblyTitle("WebInfo.Desktop")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("EPAM Systems")]
-[assembly: AssemblyProduct("EmailService.E2E.Tests.Tools.WebInfoDesktop")]
+[assembly: AssemblyProduct("WebInfo.Desktop")]
 [assembly: AssemblyCopyright("Copyright © EPAM Systems 2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

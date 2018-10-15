@@ -20,11 +20,12 @@
     using System.Windows.Media.Imaging;
     using System.Windows.Navigation;
     using System.Windows.Shapes;
+    using WebInfo.Repository;
+    using System.Diagnostics;
 
     public partial class MainWindow : MetroWindow
     {
-        private TestsDataStorage _testsDataStorage;
-        private WebInfoItemsStorage _webElementRepository;
+        private IWebElementsRepository _webElementRepository;
 
         private ElementsViewModel _viewModel;
 
@@ -44,11 +45,10 @@
 
         private void LoadInfos()
         {
-            _testsDataStorage = new TestsDataStorage(@"..\..\..\..\EmailService.E2E.Tests.TestData");
-            _testsDataStorage.Initialize();
-            _webElementRepository = _testsDataStorage.GetWebInfoItemsStorage();
+            _webElementRepository = new WebElementsRepository(@"C:\Dev\WebInfo\WebInfo\WebInfo.Test");
+            _webElementRepository.LoadWebContexts();
 
-            foreach (var context in _webElementRepository.GetItems())
+            foreach (var context in _webElementRepository.GetWebContexts())
             {
                 var model = WebFactory.CreateModelFromInfo(context);
                 _viewModel.Elements.Add(model);
@@ -288,8 +288,8 @@
                 infos.Add(info);
             }
 
-            _webElementRepository.SetItems(infos);
-            _webElementRepository.Save();
+            _webElementRepository.SetWebContexts(infos);
+            _webElementRepository.SaveWebContexts();
         }
 
         private void MoveMenuItem_Click(object sender, RoutedEventArgs e)
@@ -306,7 +306,7 @@
             if (_viewModel.MovingItem == null) return;
 
             if (!(_viewModel.SelectedElement is CombinedElementViewModel combined)) return;
-            if (combined.ElementType != WebElementTypes.Context 
+            if (combined.ElementType != WebElementTypes.Context
                 && combined.ElementType != WebElementTypes.Control) return;
             if (combined.IsSelfOrChildren(_viewModel.MovingItem)) return;
 
@@ -322,6 +322,38 @@
                 combined.Elements = new ObservableCollection<WebElementViewModel>();
             combined.Elements.Add(_viewModel.MovingItem);
             _viewModel.MovingItem = null;
+        }
+
+        private void ChromeBrowser_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            var window = e.GetPosition(this);
+            Trace.WriteLine(window.ToString());
+            var bc = e.GetPosition(ChromeBrowser);
+            Trace.WriteLine(bc.ToString());
+
+            var images = ChromeBrowser.FindChildren<Image>();
+            var c = images.Count();
+            var ii = e.GetPosition(images.First());
+            Trace.WriteLine(ii.ToString());
+
+            //e.Handled = true;
+        }
+
+        private void B_ConsoleMessage(object sender, CefSharp.ConsoleMessageEventArgs e)
+        {
+            Trace.WriteLine(e.Message);
+        }
+
+        private void ChromeBrowser_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+        {
+
+            //e.Handled = true;
+        }
+
+        private void ChromeBrowser_FrameLoadEnd(object sender, CefSharp.FrameLoadEndEventArgs e)
+        {
+            var js = File.ReadAllText(@"html\test.js");
+            e.Frame.ExecuteJavaScriptAsync(js);
         }
     }
 }

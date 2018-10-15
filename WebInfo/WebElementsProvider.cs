@@ -8,10 +8,10 @@
 
     public class WebElementsProvider : IWebElementsProvider
     {
-        private readonly IWebElementsRepository _webElementRepository;
+        private readonly IWebElementsReadOnlyRepository _webElementRepository;
         private readonly Stack<CombinedWebElementInfo> _contextStack = new Stack<CombinedWebElementInfo>();
 
-        public WebElementsProvider(IWebElementsRepository webElementRepository)
+        public WebElementsProvider(IWebElementsReadOnlyRepository webElementRepository)
         {
             _webElementRepository = webElementRepository;
         }
@@ -34,7 +34,7 @@
             }
 
             if (webContext == null)
-                webContext = _webElementRepository.GetWebContext(contextName);
+                webContext = _webElementRepository.GetWebContextOrDefault(contextName);
 
             if (webContext == null)
                 throw new Exception($"Couldn't find WebContext with name: {contextName}");
